@@ -11,34 +11,46 @@ export default function HomePage() {
       name: "Artisan Cappuccino",
       description: "Rich espresso with perfectly steamed milk and latte art",
       price: 4.5,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/placeholder.svg?height=300&width=300&text=Cappuccino",
     },
     {
       id: "2",
       name: "Blueberry Scone",
       description: "Fresh baked scone with wild blueberries and vanilla glaze",
       price: 3.25,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/placeholder.svg?height=300&width=300&text=Blueberry+Scone",
     },
     {
       id: "3",
       name: "Avocado Toast",
       description: "Multigrain bread topped with smashed avocado and microgreens",
       price: 8.75,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/placeholder.svg?height=300&width=300&text=Avocado+Toast",
     },
   ]
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center gradient-bg">
-        <div className="absolute inset-0 bg-black/20"></div>
+      {/* Hero Section with Background Image */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/placeholder.svg?height=1080&width=1920&text=Cozy+Cafe+Interior"
+            alt="Brew & Bloom Café Interior"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-brown-900/70 to-brown-600/50"></div>
+        </div>
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold text-brown-900 mb-6">
-            Welcome to <span className="text-gradient">Brew & Bloom</span>
+          <h1 className="font-serif text-5xl md:text-7xl font-bold text-cream-50 mb-6">
+            Welcome to{" "}
+            <span className="text-gradient bg-gradient-to-r from-cream-100 to-sage-200 bg-clip-text text-transparent">
+              Brew & Bloom
+            </span>
           </h1>
-          <p className="text-xl md:text-2xl text-brown-700 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-cream-100 mb-8 max-w-2xl mx-auto">
             Where every cup tells a story and every bite feels like home. Experience artisanal coffee and fresh pastries
             in our cozy neighborhood café.
           </p>
@@ -50,15 +62,15 @@ export default function HomePage() {
               asChild
               variant="outline"
               size="lg"
-              className="border-brown-600 text-brown-600 hover:bg-brown-50 px-8 py-3 rounded-full bg-transparent"
+              className="border-cream-100 text-cream-100 hover:bg-cream-100 hover:text-brown-900 px-8 py-3 rounded-full bg-transparent"
             >
               <Link href="/reservations">Reserve a Table</Link>
             </Button>
           </div>
         </div>
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <div className="w-6 h-10 border-2 border-brown-600 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-brown-600 rounded-full mt-2 animate-bounce"></div>
+          <div className="w-6 h-10 border-2 border-cream-100 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-cream-100 rounded-full mt-2 animate-bounce"></div>
           </div>
         </div>
       </section>
@@ -92,8 +104,8 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=500&width=600"
-                alt="Brew & Bloom Café Interior"
+                src="/placeholder.svg?height=500&width=600&text=Coffee+Making+Process"
+                alt="Coffee Making Process"
                 width={600}
                 height={500}
                 className="rounded-2xl shadow-2xl"
@@ -170,7 +182,12 @@ export default function HomePage() {
               </Button>
             </div>
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-              <Image src="/placeholder.svg?height=400&width=600" alt="Café Location" fill className="object-cover" />
+              <Image
+                src="/placeholder.svg?height=400&width=600&text=Cafe+Location+Map"
+                alt="Café Location"
+                fill
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
