@@ -17,6 +17,9 @@ export default function AuthPage() {
     password: "",
     confirmPassword: "",
   })
+  const [registerError, setRegisterError] = useState("")
+  const [registerSuccess, setRegisterSuccess] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,14 +27,59 @@ export default function AuthPage() {
     alert("Login functionality would be implemented here")
   }
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    setRegisterError("")
+    setRegisterSuccess("")
+    
     if (registerData.password !== registerData.confirmPassword) {
-      alert("Passwords do not match")
+      setRegisterError("Passwords do not match")
       return
     }
-    console.log("Register:", registerData)
-    alert("Registration functionality would be implemented here")
+
+    if (registerData.password.length < 6) {
+      setRegisterError("Password must be at least 6 characters long")
+      return
+    }
+
+    setIsLoading(true)
+    
+    try {
+      const response = await fetch("http://localhost:4000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: registerData.name,
+          email: registerData.email,
+          password: registerData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setRegisterError(data.error || "Registration failed")
+      } else {
+        setRegisterSuccess("Registration successful! You can now sign in.")
+        // Clear the form
+        setRegisterData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        })
+        // Optionally save the JWT token
+        if (data.token) {
+          localStorage.setItem("token", data.token)
+        }
+      }
+    } catch (error) {
+      setRegisterError("Network error. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -140,11 +188,25 @@ export default function AuthPage() {
                       required
                     />
                   </div>
+                  
+                  {registerError && (
+                    <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                      {registerError}
+                    </div>
+                  )}
+                  
+                  {registerSuccess && (
+                    <div className="text-green-600 text-sm bg-green-50 p-3 rounded-md">
+                      {registerSuccess}
+                    </div>
+                  )}
+                  
                   <Button
                     type="submit"
-                    className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 mt-6"
+                    disabled={isLoading}
+                    className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 mt-6 disabled:opacity-50"
                   >
-                    Create Account
+                    {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
               </TabsContent>
