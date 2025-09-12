@@ -12,7 +12,7 @@ const menuItems = [
     id: "1",
     name: "Espresso",
     description: "Rich, bold shot of our signature blend",
-    price: 2.5,
+    price: 207.5,
     category: "Coffee",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -20,7 +20,7 @@ const menuItems = [
     id: "2",
     name: "Cappuccino",
     description: "Espresso with steamed milk and foam, topped with latte art",
-    price: 4.5,
+    price: 373.5,
     category: "Coffee",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -28,7 +28,7 @@ const menuItems = [
     id: "3",
     name: "Latte",
     description: "Smooth espresso with steamed milk and a touch of foam",
-    price: 4.75,
+    price: 394.25,
     category: "Coffee",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -36,7 +36,7 @@ const menuItems = [
     id: "4",
     name: "Cold Brew",
     description: "Smooth, refreshing coffee brewed cold for 12 hours",
-    price: 3.75,
+    price: 311.25,
     category: "Coffee",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -44,7 +44,7 @@ const menuItems = [
     id: "5",
     name: "Croissant",
     description: "Buttery, flaky pastry baked fresh daily",
-    price: 3.25,
+    price: 269.75,
     category: "Food",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -52,7 +52,7 @@ const menuItems = [
     id: "6",
     name: "Avocado Toast",
     description: "Multigrain bread with smashed avocado, microgreens, and sea salt",
-    price: 8.75,
+    price: 726.25,
     category: "Food",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -60,7 +60,7 @@ const menuItems = [
     id: "7",
     name: "Blueberry Muffin",
     description: "Moist muffin packed with fresh blueberries",
-    price: 3.5,
+    price: 290.5,
     category: "Food",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -68,7 +68,7 @@ const menuItems = [
     id: "8",
     name: "Fresh Orange Juice",
     description: "Freshly squeezed orange juice, no pulp",
-    price: 4.25,
+    price: 352.75,
     category: "Beverages",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -76,7 +76,7 @@ const menuItems = [
     id: "9",
     name: "Herbal Tea",
     description: "Selection of premium herbal teas",
-    price: 3.0,
+    price: 249.0,
     category: "Beverages",
     image: "/placeholder.svg?height=300&width=300",
   },
@@ -141,7 +141,7 @@ export default function MenuPage() {
                 <h3 className="font-serif text-xl font-bold text-brown-900 mb-2">{item.name}</h3>
                 <p className="text-brown-700 mb-4 text-sm leading-relaxed">{item.description}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-brown-600">${item.price.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-brown-600">₹{item.price.toFixed(2)}</span>
                   <Button
                     onClick={() => handleAddToCart(item)}
                     className="bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full px-6 py-2 transition-all duration-200 hover:scale-105"

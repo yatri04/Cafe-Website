@@ -21,7 +21,7 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([
     {
       id: "REV-001",
-      customerName: "Sarah Johnson",
+      customerName: "Sneha Mathur",
       customerEmail: "sarah.johnson@email.com",
       rating: 5,
       reviewText:
@@ -32,7 +32,7 @@ export default function ReviewsPage() {
     },
     {
       id: "REV-002",
-      customerName: "Mike Chen",
+      customerName: "Mohak Aggarwal",
       customerEmail: "mike.chen@email.com",
       rating: 4,
       reviewText:
@@ -43,7 +43,7 @@ export default function ReviewsPage() {
     },
     {
       id: "REV-003",
-      customerName: "Emily Davis",
+      customerName: "Pooja Pathak",
       customerEmail: "emily.davis@email.com",
       rating: 5,
       reviewText:
@@ -54,7 +54,7 @@ export default function ReviewsPage() {
     },
     {
       id: "REV-004",
-      customerName: "Anonymous User",
+      customerName: "Swara Jariwala",
       customerEmail: "user@email.com",
       rating: 2,
       reviewText:
@@ -65,7 +65,7 @@ export default function ReviewsPage() {
     },
     {
       id: "REV-005",
-      customerName: "David Wilson",
+      customerName: "Yatri Dungarani",
       customerEmail: "david.wilson@email.com",
       rating: 5,
       reviewText:

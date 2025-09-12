@@ -21,7 +21,7 @@ const existingReviews = [
   },
   {
     id: 2,
-    name: "Mike Chen",
+    name: "Mohak Aggarwal",
     rating: 5,
     date: "2024-01-12",
     comment:
@@ -29,7 +29,7 @@ const existingReviews = [
   },
   {
     id: 3,
-    name: "Emily Davis",
+    name: "Pooja Pathak",
     rating: 4,
     date: "2024-01-10",
     comment:
@@ -37,7 +37,7 @@ const existingReviews = [
   },
   {
     id: 4,
-    name: "David Rodriguez",
+    name: "Swara Jariwala",
     rating: 5,
     date: "2024-01-08",
     comment:
@@ -45,7 +45,7 @@ const existingReviews = [
   },
   {
     id: 5,
-    name: "Lisa Thompson",
+    name: "Yatri Dungarani",
     rating: 5,
     date: "2024-01-05",
     comment:
@@ -53,7 +53,7 @@ const existingReviews = [
   },
   {
     id: 6,
-    name: "James Wilson",
+    name: "Aarav Patel",
     rating: 4,
     date: "2024-01-03",
     comment:

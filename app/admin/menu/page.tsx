@@ -29,7 +29,7 @@ export default function MenuManagerPage() {
       id: "1",
       name: "Cappuccino",
       category: "Coffee",
-      price: 4.5,
+      price: 373.50,
       description: "Rich espresso with perfectly steamed milk and latte art",
       image: "/placeholder.svg?height=200&width=200&text=Cappuccino",
       available: true,
@@ -38,7 +38,7 @@ export default function MenuManagerPage() {
       id: "2",
       name: "Croissant",
       category: "Food",
-      price: 3.25,
+      price: 269.75,
       description: "Buttery, flaky pastry baked fresh daily",
       image: "/placeholder.svg?height=200&width=200&text=Croissant",
       available: true,
@@ -47,7 +47,7 @@ export default function MenuManagerPage() {
       id: "3",
       name: "Cold Brew",
       category: "Coffee",
-      price: 3.75,
+      price: 311.25,
       description: "Smooth, refreshing coffee brewed cold for 12 hours",
       image: "/placeholder.svg?height=200&width=200&text=Cold+Brew",
       available: false,
@@ -56,7 +56,7 @@ export default function MenuManagerPage() {
       id: "4",
       name: "Avocado Toast",
       category: "Food",
-      price: 8.75,
+      price: 726.25,
       description: "Multigrain bread with smashed avocado, microgreens, and sea salt",
       image: "/placeholder.svg?height=200&width=200&text=Avocado+Toast",
       available: true,
@@ -175,7 +175,7 @@ export default function MenuManagerPage() {
               <h3 className="font-serif text-lg font-bold text-brown-900 mb-2">{item.name}</h3>
               <p className="text-brown-700 text-sm mb-3 line-clamp-2">{item.description}</p>
               <div className="flex justify-between items-center mb-4">
-                <span className="text-xl font-bold text-brown-600">${item.price.toFixed(2)}</span>
+                <span className="text-xl font-bold text-brown-600">₹{item.price.toFixed(2)}</span>
                 <div className="flex items-center space-x-2">
                   <Label htmlFor={`available-${item.id}`} className="text-sm">
                     Available

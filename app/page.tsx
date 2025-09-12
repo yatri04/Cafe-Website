@@ -10,21 +10,21 @@ export default function HomePage() {
       id: "1",
       name: "Artisan Cappuccino",
       description: "Rich espresso with perfectly steamed milk and latte art",
-      price: 4.5,
+      price: 373.50,
       image: "/placeholder.svg?height=300&width=300&text=Cappuccino",
     },
     {
       id: "2",
       name: "Blueberry Scone",
       description: "Fresh baked scone with wild blueberries and vanilla glaze",
-      price: 3.25,
+      price: 269.75,
       image: "/placeholder.svg?height=300&width=300&text=Blueberry+Scone",
     },
     {
       id: "3",
       name: "Avocado Toast",
       description: "Multigrain bread topped with smashed avocado and microgreens",
-      price: 8.75,
+      price: 726.25,
       image: "/placeholder.svg?height=300&width=300&text=Avocado+Toast",
     },
   ]
@@ -82,14 +82,10 @@ export default function HomePage() {
             <div>
               <h2 className="font-serif text-4xl font-bold text-brown-900 mb-6">Our Story</h2>
               <p className="text-brown-700 text-lg mb-6 leading-relaxed">
-                Founded in 2018, Brew & Bloom began as a dream to create a warm, welcoming space where the community
-                could gather over exceptional coffee and homemade treats. Our passion for quality ingredients and
-                artisanal craftsmanship shines through in every cup we serve.
+              Brew & Bloom began in 2025 with a simple idea: to create a space where people could feel at home  a place to pause, connect, and enjoy the little things. What started as a cozy neighborhood café has grown into a beloved gathering spot, where conversations flow as easily as the coffee.
               </p>
               <p className="text-brown-700 text-lg mb-8 leading-relaxed">
-                We source our beans directly from sustainable farms and bake our pastries fresh daily using locally
-                sourced ingredients. Every visit to Brew & Bloom is an invitation to slow down, savor the moment, and
-                connect with your community.
+              We’re passionate about quality  from the beans we brew to the pastries we bake. Our coffee is sourced directly from sustainable farms we trust, and our kitchen is stocked with fresh, locally sourced ingredients. Everything we serve is made with care and intention.
               </p>
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
@@ -134,7 +130,7 @@ export default function HomePage() {
                   <h3 className="font-serif text-xl font-bold text-brown-900 mb-2">{item.name}</h3>
                   <p className="text-brown-700 mb-4">{item.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-brown-600">${item.price.toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-brown-600">₹{item.price.toFixed(2)}</span>
                     <Button className="bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full">Add to Cart</Button>
                   </div>
                 </CardContent>
@@ -203,19 +199,19 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Sarah Johnson",
+                name: "Sneha Mathur",
                 rating: 5,
                 comment:
                   "The best coffee in town! The atmosphere is so cozy and welcoming. I come here every morning before work.",
               },
               {
-                name: "Mike Chen",
+                name: "Mohak Aggarwal",
                 rating: 5,
                 comment:
                   "Amazing pastries and friendly staff. The avocado toast is incredible, and their latte art is beautiful.",
               },
               {
-                name: "Emily Davis",
+                name: "Pooja Pathak",
                 rating: 5,
                 comment:
                   "Perfect spot for working or catching up with friends. Great WiFi, comfortable seating, and excellent coffee.",
@@ -259,7 +255,7 @@ export default function HomePage() {
                 <span className="font-serif text-xl font-bold">Brew & Bloom</span>
               </div>
               <p className="text-cream-200">
-                Your neighborhood café serving artisanal coffee and fresh pastries since 2018.
+                Your neighborhood café serving artisanal coffee and fresh pastries since 2025.
               </p>
             </div>
             <div>
@@ -291,8 +287,8 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Contact Info</h3>
               <ul className="space-y-2 text-cream-200">
                 <li>123 Coffee Street</li>
-                <li>Downtown District, City 12345</li>
-                <li>(555) 123-BREW</li>
+                <li>District, City 12345</li>
+                <li>9213456788</li>
                 <li>hello@brewandbloom.com</li>
               </ul>
             </div>
@@ -315,7 +311,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-brown-800 mt-8 pt-8 text-center text-cream-200">
-            <p>&copy; 2024 Brew & Bloom Café. All rights reserved.</p>
+            <p>&copy; 2025 Brew & Bloom Café. All rights reserved.</p>
           </div>
         </div>
       </footer>

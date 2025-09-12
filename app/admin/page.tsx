@@ -21,7 +21,7 @@ import {
   Pie,
   Cell,
 } from "recharts"
-import { DollarSign, ShoppingCart, Calendar, Users, TrendingUp, Clock, Star } from "lucide-react"
+import { IndianRupee, ShoppingCart, Calendar, Users, TrendingUp, Clock, Star } from "lucide-react"
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -131,10 +131,10 @@ export default function AdminDashboard() {
           <Card className="card-3d bg-cream-50 border-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-brown-700">Today's Sales</CardTitle>
-              <DollarSign className="h-4 w-4 text-brown-600" />
+              <IndianRupee className="h-4 w-4 text-brown-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-brown-900">$2,847</div>
+              <div className="text-2xl font-bold text-brown-900">₹2,36,301</div>
               <p className="text-xs text-sage-600 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +12% from yesterday
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ time, percent }) => `${time} ${(percent * 100).toFixed(0)}%`}
+                    label={({ time, percent }) => `${time} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="reservations"

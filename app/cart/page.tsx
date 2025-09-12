@@ -45,7 +45,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-serif text-lg font-bold text-brown-900">{item.name}</h3>
-                      <p className="text-brown-600 font-medium">${item.price.toFixed(2)}</p>
+                      <p className="text-brown-600 font-medium">₹{item.price.toFixed(2)}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button
@@ -91,14 +91,14 @@ export default function CartPage() {
                       <span className="text-brown-700">
                         {item.name} x{item.quantity}
                       </span>
-                      <span className="text-brown-900 font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="text-brown-900 font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="border-t border-brown-200 pt-4 mb-6">
                   <div className="flex justify-between items-center">
                     <span className="font-serif text-lg font-bold text-brown-900">Total</span>
-                    <span className="font-serif text-xl font-bold text-brown-600">${total.toFixed(2)}</span>
+                    <span className="font-serif text-xl font-bold text-brown-600">₹{total.toFixed(2)}</span>
                   </div>
                 </div>
                 <div className="space-y-3">
