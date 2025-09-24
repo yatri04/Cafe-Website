@@ -51,6 +51,7 @@ export default function ReservationsPage() {
 
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const isoTime = new Date(`${formData.date}T${formData.time}`).toISOString()
       const response = await fetch(`${baseUrl}/api/reservations`, {
         method: "POST",
         headers: {
@@ -59,7 +60,7 @@ export default function ReservationsPage() {
         },
         body: JSON.stringify({
           table: parseInt(formData.partySize),
-          time: `${formData.date}T${formData.time}:00.000Z`
+          time: isoTime
         }),
       })
 
