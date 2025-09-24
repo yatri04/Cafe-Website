@@ -15,6 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
+
 app.use(json());
 
 // Modular routes
@@ -23,6 +24,11 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+
+// Root route for base URL
+app.get('/', (req, res) => {
+  res.send('Cafe API is running');
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
