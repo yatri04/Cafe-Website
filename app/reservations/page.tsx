@@ -50,7 +50,8 @@ export default function ReservationsPage() {
     setSubmitError("")
 
     try {
-      const response = await fetch("http://localhost:4000/api/reservations", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/reservations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

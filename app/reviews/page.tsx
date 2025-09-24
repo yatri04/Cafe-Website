@@ -56,9 +56,10 @@ export default function ReviewsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
         const [reviewsResponse, ordersResponse] = await Promise.all([
-          fetch('http://localhost:4000/api/reviews/approved'),
-          user ? fetch('http://localhost:4000/api/orders/my-orders', {
+          fetch(`${baseUrl}/api/reviews/approved`),
+          user ? fetch(`${baseUrl}/api/orders/my-orders`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

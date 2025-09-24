@@ -35,9 +35,10 @@ export default function MenuPage() {
 
   const fetchData = async () => {
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
       const [menuResponse, categoriesResponse] = await Promise.all([
-        fetch("http://localhost:4000/api/menu"),
-        fetch("http://localhost:4000/api/menu/categories")
+        fetch(`${baseUrl}/api/menu`),
+        fetch(`${baseUrl}/api/menu/categories`)
       ])
       
       if (menuResponse.ok && categoriesResponse.ok) {

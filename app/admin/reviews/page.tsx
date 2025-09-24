@@ -44,13 +44,14 @@ export default function ReviewsPage() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token')
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
         const [reviewsResponse, statsResponse] = await Promise.all([
-          fetch('http://localhost:4000/api/reviews/all', {
+          fetch(`${baseUrl}/api/reviews/all`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           }),
-          fetch('http://localhost:4000/api/reviews/stats', {
+          fetch(`${baseUrl}/api/reviews/stats`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }

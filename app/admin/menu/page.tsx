@@ -62,13 +62,14 @@ export default function MenuManagerPage() {
   const fetchData = async () => {
     try {
       console.log('Fetching data with token:', token)
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
       const [menuResponse, categoriesResponse] = await Promise.all([
-        fetch("http://localhost:4000/api/menu", {
+        fetch(`${baseUrl}/api/menu`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         }),
-        fetch("http://localhost:4000/api/menu/categories", {
+        fetch(`${baseUrl}/api/menu/categories`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
