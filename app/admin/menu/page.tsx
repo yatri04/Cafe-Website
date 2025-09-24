@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,106 +12,219 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Trash2, Plus, Edit, Upload } from "lucide-react"
 import Image from "next/image"
+import { useAuth } from "@/components/auth-provider"
 
 interface MenuItem {
   id: string
   name: string
-  category: string
-  price: number
   description: string
-  image: string
+  price: number
+  image?: string
   available: boolean
+  categoryId: string
+  category: {
+    id: string
+    name: string
+  }
+}
+
+interface Category {
+  id: string
+  name: string
 }
 
 export default function MenuManagerPage() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([
-    {
-      id: "1",
-      name: "Cappuccino",
-      category: "Coffee",
-      price: 373.50,
-      description: "Rich espresso with perfectly steamed milk and latte art",
-      image: "/placeholder.svg?height=200&width=200&text=Cappuccino",
-      available: true,
-    },
-    {
-      id: "2",
-      name: "Croissant",
-      category: "Food",
-      price: 269.75,
-      description: "Buttery, flaky pastry baked fresh daily",
-      image: "/placeholder.svg?height=200&width=200&text=Croissant",
-      available: true,
-    },
-    {
-      id: "3",
-      name: "Cold Brew",
-      category: "Coffee",
-      price: 311.25,
-      description: "Smooth, refreshing coffee brewed cold for 12 hours",
-      image: "/placeholder.svg?height=200&width=200&text=Cold+Brew",
-      available: false,
-    },
-    {
-      id: "4",
-      name: "Avocado Toast",
-      category: "Food",
-      price: 726.25,
-      description: "Multigrain bread with smashed avocado, microgreens, and sea salt",
-      image: "/placeholder.svg?height=200&width=200&text=Avocado+Toast",
-      available: true,
-    },
-  ])
-
+  const { user, token } = useAuth()
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [newItem, setNewItem] = useState<Partial<MenuItem>>({
     name: "",
-    category: "",
+    categoryId: "",
     price: 0,
     description: "",
     image: "",
     available: true,
   })
 
-  const categories = ["All", "Coffee", "Food", "Beverages"]
+  useEffect(() => {
+    if (user?.role !== 'ADMIN') {
+      window.location.href = '/auth'
+      return
+    }
+    fetchData()
+  }, [user])
+
+  const fetchData = async () => {
+    try {
+      console.log('Fetching data with token:', token)
+      const [menuResponse, categoriesResponse] = await Promise.all([
+        fetch("http://localhost:4000/api/menu", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }),
+        fetch("http://localhost:4000/api/menu/categories", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      ])
+
+      console.log('Menu response status:', menuResponse.status)
+      console.log('Categories response status:', categoriesResponse.status)
+
+      if (menuResponse.ok && categoriesResponse.ok) {
+        const menuData = await menuResponse.json()
+        const categoriesData = await categoriesResponse.json()
+        console.log('Menu data:', menuData.length, 'items')
+        console.log('Categories data:', categoriesData.length, 'categories')
+        setMenuItems(menuData)
+        setCategories(categoriesData)
+      } else {
+        const menuError = await menuResponse.text()
+        const catError = await categoriesResponse.text()
+        console.error('Menu error:', menuError)
+        console.error('Categories error:', catError)
+        setError("Failed to load data")
+      }
+    } catch (error) {
+      console.error('Fetch error:', error)
+      setError("Network error. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredItems =
-    selectedCategory === "All" ? menuItems : menuItems.filter((item) => item.category === selectedCategory)
+    selectedCategory === "All" ? menuItems : menuItems.filter((item) => item.category.name === selectedCategory)
 
-  const handleAddItem = () => {
-    if (newItem.name && newItem.category && newItem.price && newItem.description) {
-      const item: MenuItem = {
-        id: (menuItems.length + 1).toString(),
-        name: newItem.name,
-        category: newItem.category,
-        price: newItem.price,
-        description: newItem.description,
-        image:
-          newItem.image || "/placeholder.svg?height=200&width=200&text=" + encodeURIComponent(newItem.name || "Item"),
-        available: newItem.available ?? true,
+  const handleAddItem = async () => {
+    if (newItem.name && newItem.categoryId && newItem.price && newItem.description) {
+      try {
+        console.log('Adding item:', newItem)
+        console.log('Token:', token)
+        
+        const response = await fetch("http://localhost:4000/api/menu/item", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: newItem.name,
+            description: newItem.description,
+            price: newItem.price,
+            image: newItem.image,
+            categoryId: newItem.categoryId,
+            available: newItem.available ?? true,
+          }),
+        })
+
+        console.log('Response status:', response.status)
+        const responseData = await response.json()
+        console.log('Response data:', responseData)
+
+        if (response.ok) {
+          await fetchData() // Refresh data
+          setNewItem({ name: "", categoryId: "", price: 0, description: "", image: "", available: true })
+          setIsDialogOpen(false)
+        } else {
+          setError(`Failed to add menu item: ${responseData.error || 'Unknown error'}`)
+        }
+      } catch (error) {
+        console.error('Error adding item:', error)
+        setError("Network error. Please try again.")
       }
-      setMenuItems([...menuItems, item])
-      setNewItem({ name: "", category: "", price: 0, description: "", image: "", available: true })
-      setIsDialogOpen(false)
     }
   }
 
-  const handleEditItem = () => {
+  const handleEditItem = async () => {
     if (editingItem) {
-      setMenuItems(menuItems.map((item) => (item.id === editingItem.id ? editingItem : item)))
-      setEditingItem(null)
-      setIsDialogOpen(false)
+      try {
+        const response = await fetch(`http://localhost:4000/api/menu/item/${editingItem.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: editingItem.name,
+            description: editingItem.description,
+            price: editingItem.price,
+            image: editingItem.image,
+            categoryId: editingItem.categoryId,
+            available: editingItem.available,
+          }),
+        })
+
+        if (response.ok) {
+          await fetchData() // Refresh data
+          setEditingItem(null)
+          setIsDialogOpen(false)
+        } else {
+          setError("Failed to update menu item")
+        }
+      } catch (error) {
+        setError("Network error. Please try again.")
+      }
     }
   }
 
-  const handleDeleteItem = (id: string) => {
-    setMenuItems(menuItems.filter((item) => item.id !== id))
+  const handleDeleteItem = async (id: string) => {
+    if (confirm("Are you sure you want to delete this item?")) {
+      try {
+        const response = await fetch(`http://localhost:4000/api/menu/item/${id}`, {
+          method: "DELETE",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+
+        if (response.ok) {
+          await fetchData() // Refresh data
+        } else {
+          setError("Failed to delete menu item")
+        }
+      } catch (error) {
+        setError("Network error. Please try again.")
+      }
+    }
   }
 
-  const toggleAvailability = (id: string) => {
-    setMenuItems(menuItems.map((item) => (item.id === id ? { ...item, available: !item.available } : item)))
+  const toggleAvailability = async (id: string) => {
+    const item = menuItems.find(item => item.id === id)
+    if (item) {
+      try {
+        const response = await fetch(`http://localhost:4000/api/menu/item/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: item.name,
+            description: item.description,
+            price: item.price,
+            image: item.image,
+            categoryId: item.categoryId,
+            available: !item.available,
+          }),
+        })
+
+        if (response.ok) {
+          await fetchData() // Refresh data
+        } else {
+          setError("Failed to update availability")
+        }
+      } catch (error) {
+        setError("Network error. Please try again.")
+      }
+    }
   }
 
   const openEditDialog = (item: MenuItem) => {
@@ -121,8 +234,35 @@ export default function MenuManagerPage() {
 
   const openAddDialog = () => {
     setEditingItem(null)
-    setNewItem({ name: "", category: "", price: 0, description: "", image: "", available: true })
+    setNewItem({ name: "", categoryId: "", price: 0, description: "", image: "", available: true })
     setIsDialogOpen(true)
+  }
+
+  if (loading) {
+    return (
+      <div className="p-8">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brown-600 mx-auto mb-4"></div>
+          <p className="text-brown-700">Loading menu items...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-center py-12">
+          <p className="text-red-600 text-lg">{error}</p>
+          <Button 
+            onClick={fetchData}
+            className="mt-4 bg-brown-600 hover:bg-brown-700 text-cream-50"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -140,18 +280,29 @@ export default function MenuManagerPage() {
 
       {/* Category Filter */}
       <div className="flex flex-wrap gap-4 mb-8">
+        <Button
+          variant={selectedCategory === "All" ? "default" : "outline"}
+          onClick={() => setSelectedCategory("All")}
+          className={`rounded-full ${
+            selectedCategory === "All"
+              ? "bg-brown-600 hover:bg-brown-700 text-cream-50"
+              : "border-brown-600 text-brown-600 hover:bg-brown-50"
+          }`}
+        >
+          All
+        </Button>
         {categories.map((category) => (
           <Button
-            key={category}
-            variant={selectedCategory === category ? "default" : "outline"}
-            onClick={() => setSelectedCategory(category)}
+            key={category.id}
+            variant={selectedCategory === category.name ? "default" : "outline"}
+            onClick={() => setSelectedCategory(category.name)}
             className={`rounded-full ${
-              selectedCategory === category
+              selectedCategory === category.name
                 ? "bg-brown-600 hover:bg-brown-700 text-cream-50"
                 : "border-brown-600 text-brown-600 hover:bg-brown-50"
             }`}
           >
-            {category}
+            {category.name}
           </Button>
         ))}
       </div>
@@ -163,7 +314,7 @@ export default function MenuManagerPage() {
             <div className="relative h-48">
               <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
               <div className="absolute top-2 left-2">
-                <Badge className="bg-brown-600 text-cream-50">{item.category}</Badge>
+                <Badge className="bg-brown-600 text-cream-50">{item.category.name}</Badge>
               </div>
               <div className="absolute top-2 right-2">
                 <Badge variant={item.available ? "default" : "secondary"}>
@@ -237,20 +388,22 @@ export default function MenuManagerPage() {
                 Category
               </Label>
               <Select
-                value={editingItem ? editingItem.category : newItem.category}
+                value={editingItem ? editingItem.categoryId : newItem.categoryId}
                 onValueChange={(value) =>
                   editingItem
-                    ? setEditingItem({ ...editingItem, category: value })
-                    : setNewItem({ ...newItem, category: value })
+                    ? setEditingItem({ ...editingItem, categoryId: value })
+                    : setNewItem({ ...newItem, categoryId: value })
                 }
               >
                 <SelectTrigger className="mt-1 border-brown-200 focus:border-brown-500">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Food">Food</SelectItem>
-                  <SelectItem value="Beverages">Beverages</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -292,22 +445,18 @@ export default function MenuManagerPage() {
               <Label htmlFor="itemImage" className="text-brown-700 font-medium">
                 Image URL
               </Label>
-              <div className="flex space-x-2 mt-1">
-                <Input
-                  id="itemImage"
-                  value={editingItem ? editingItem.image : newItem.image}
-                  onChange={(e) =>
-                    editingItem
-                      ? setEditingItem({ ...editingItem, image: e.target.value })
-                      : setNewItem({ ...newItem, image: e.target.value })
-                  }
-                  className="border-brown-200 focus:border-brown-500"
-                  placeholder="Enter image URL or upload"
-                />
-                <Button variant="outline" size="icon" className="border-brown-300 text-brown-700 bg-transparent">
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </div>
+              <Input
+                id="itemImage"
+                type="url"
+                value={editingItem ? editingItem.image || "" : newItem.image || ""}
+                onChange={(e) =>
+                  editingItem
+                    ? setEditingItem({ ...editingItem, image: e.target.value })
+                    : setNewItem({ ...newItem, image: e.target.value })
+                }
+                className="mt-1 border-brown-200 focus:border-brown-500"
+                placeholder="https://example.com/image.jpg"
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Switch

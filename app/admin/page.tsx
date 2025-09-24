@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -22,52 +22,91 @@ import {
   Cell,
 } from "recharts"
 import { IndianRupee, ShoppingCart, Calendar, Users, TrendingUp, Clock, Star } from "lucide-react"
+import { useAuth } from "@/components/auth-provider"
+import { useRouter } from "next/navigation"
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loginData, setLoginData] = useState({ username: "", password: "" })
-
-  // Sample analytics data
-  const dailySalesData = [
-    { day: "Mon", sales: 1200 },
-    { day: "Tue", sales: 1900 },
-    { day: "Wed", sales: 800 },
-    { day: "Thu", sales: 1600 },
-    { day: "Fri", sales: 2200 },
-    { day: "Sat", sales: 2800 },
-    { day: "Sun", sales: 2100 },
-  ]
-
-  const peakHoursData = [
-    { time: "7-9 AM", reservations: 15 },
-    { time: "9-11 AM", reservations: 25 },
-    { time: "11-1 PM", reservations: 35 },
-    { time: "1-3 PM", reservations: 20 },
-    { time: "3-5 PM", reservations: 18 },
-    { time: "5-7 PM", reservations: 30 },
-    { time: "7-9 PM", reservations: 28 },
-  ]
-
-  const bestSellingItems = [
-    { name: "Cappuccino", sales: 145 },
-    { name: "Croissant", sales: 89 },
-    { name: "Latte", sales: 132 },
-    { name: "Avocado Toast", sales: 76 },
-    { name: "Cold Brew", sales: 98 },
-  ]
+  const { user, token, login, logout } = useAuth()
+  const router = useRouter()
+  const [loginData, setLoginData] = useState({ email: "", password: "" })
+  const [loginError, setLoginError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [analytics, setAnalytics] = useState({
+    todaySales: 0,
+    weeklyOrders: 0,
+    totalCustomers: 0,
+    weeklyReservations: 0,
+    bestSellingItems: [],
+    dailySales: []
+  })
+  const [analyticsLoading, setAnalyticsLoading] = useState(true)
 
   const COLORS = ["#8B4513", "#D2B48C", "#A0522D", "#DEB887", "#CD853F"]
 
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (loginData.username === "admin" && loginData.password === "admin123") {
-      setIsAuthenticated(true)
-    } else {
-      alert("Invalid credentials")
+  useEffect(() => {
+    // Redirect if user is not admin
+    if (user && user.role !== 'ADMIN') {
+      router.push('/auth')
+    } else if (user && user.role === 'ADMIN') {
+      fetchAnalytics()
+    }
+  }, [user, router])
+
+  const fetchAnalytics = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/orders/admin/analytics", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setAnalytics(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error)
+    } finally {
+      setAnalyticsLoading(false)
     }
   }
 
-  if (!isAuthenticated) {
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setLoginError("")
+
+    try {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        if (data.user.role === 'ADMIN') {
+          login(data.token, data.user)
+        } else {
+          setLoginError("Access denied. Admin privileges required.")
+        }
+      } else {
+        setLoginError(data.error || "Login failed")
+      }
+    } catch (error) {
+      setLoginError("Network error. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (!user || user.role !== 'ADMIN') {
     return (
       <div className="min-h-screen bg-cream-50 py-8 flex items-center justify-center">
         <Card className="card-3d bg-cream-50 border-0 w-full max-w-md">
@@ -77,13 +116,14 @@ export default function AdminDashboard() {
           <CardContent>
             <form onSubmit={handleAdminLogin} className="space-y-4">
               <div>
-                <Label htmlFor="username" className="text-brown-700 font-medium">
-                  Username
+                <Label htmlFor="email" className="text-brown-700 font-medium">
+                  Email
                 </Label>
                 <Input
-                  id="username"
-                  value={loginData.username}
-                  onChange={(e) => setLoginData((prev) => ({ ...prev, username: e.target.value }))}
+                  id="email"
+                  type="email"
+                  value={loginData.email}
+                  onChange={(e) => setLoginData((prev) => ({ ...prev, email: e.target.value }))}
                   className="mt-1 border-brown-200 focus:border-brown-500 focus:ring-brown-500"
                   required
                 />
@@ -101,11 +141,20 @@ export default function AdminDashboard() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3">
-                Login
+              {loginError && (
+                <div className="text-red-600 text-sm text-center bg-red-50 p-2 rounded">
+                  {loginError}
+                </div>
+              )}
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3"
+              >
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
-            <p className="text-sm text-brown-600 mt-4 text-center">Demo credentials: admin / admin123</p>
+            <p className="text-sm text-brown-600 mt-4 text-center">Admin credentials: admin@cafe.com / admin123</p>
           </CardContent>
         </Card>
       </div>
@@ -118,7 +167,7 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="font-serif text-4xl font-bold text-brown-900">Admin Dashboard</h1>
           <Button
-            onClick={() => setIsAuthenticated(false)}
+            onClick={logout}
             variant="outline"
             className="border-brown-600 text-brown-600 hover:bg-brown-50"
           >
@@ -134,10 +183,12 @@ export default function AdminDashboard() {
               <IndianRupee className="h-4 w-4 text-brown-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-brown-900">₹2,36,301</div>
+              <div className="text-2xl font-bold text-brown-900">
+                {analyticsLoading ? "..." : `₹${analytics.todaySales.toLocaleString()}`}
+              </div>
               <p className="text-xs text-sage-600 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                +12% from yesterday
+                Today's sales
               </p>
             </CardContent>
           </Card>
@@ -148,10 +199,12 @@ export default function AdminDashboard() {
               <ShoppingCart className="h-4 w-4 text-brown-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-brown-900">342</div>
+              <div className="text-2xl font-bold text-brown-900">
+                {analyticsLoading ? "..." : analytics.weeklyOrders}
+              </div>
               <p className="text-xs text-sage-600 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                +8% from last week
+                This week
               </p>
             </CardContent>
           </Card>
@@ -162,7 +215,9 @@ export default function AdminDashboard() {
               <Calendar className="h-4 w-4 text-brown-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-brown-900">89</div>
+              <div className="text-2xl font-bold text-brown-900">
+                {analyticsLoading ? "..." : analytics.weeklyReservations}
+              </div>
               <p className="text-xs text-sage-600 flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
                 This week
@@ -176,7 +231,9 @@ export default function AdminDashboard() {
               <Users className="h-4 w-4 text-brown-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-brown-900">1,247</div>
+              <div className="text-2xl font-bold text-brown-900">
+                {analyticsLoading ? "..." : analytics.totalCustomers.toLocaleString()}
+              </div>
               <p className="text-xs text-sage-600 flex items-center">
                 <Star className="h-3 w-3 mr-1" />
                 Registered users
@@ -193,7 +250,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={dailySalesData}>
+                <LineChart data={analytics.dailySales}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#D2B48C" />
                   <XAxis dataKey="day" stroke="#8B4513" />
                   <YAxis stroke="#8B4513" />
@@ -216,38 +273,6 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="card-3d bg-cream-50 border-0">
-            <CardHeader>
-              <CardTitle className="font-serif text-xl text-brown-900">Peak Reservation Times</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={peakHoursData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ time, percent }) => `${time} ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="reservations"
-                  >
-                    {peakHoursData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#F5F5DC",
-                      border: "1px solid #D2B48C",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
         </div>
 
         <Card className="card-3d bg-cream-50 border-0">
@@ -256,7 +281,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={bestSellingItems}>
+              <BarChart data={analytics.bestSellingItems}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#D2B48C" />
                 <XAxis dataKey="name" stroke="#8B4513" />
                 <YAxis stroke="#8B4513" />

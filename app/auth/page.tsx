@@ -19,12 +19,47 @@ export default function AuthPage() {
   })
   const [registerError, setRegisterError] = useState("")
   const [registerSuccess, setRegisterSuccess] = useState("")
+  const [loginError, setLoginError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Login:", loginData)
-    alert("Login functionality would be implemented here")
+    setLoginError("")
+    setIsLoading(true)
+    
+    try {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setLoginError(data.error || "Login failed")
+      } else {
+        // Save the token and user data
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("user", JSON.stringify(data.user))
+        
+        // Redirect to home page or admin dashboard
+        if (data.user.role === 'ADMIN') {
+          window.location.href = "/admin"
+        } else {
+          window.location.href = "/"
+        }
+      }
+    } catch (error) {
+      setLoginError("Network error. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -126,11 +161,19 @@ export default function AuthPage() {
                       required
                     />
                   </div>
+                  
+                  {loginError && (
+                    <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                      {loginError}
+                    </div>
+                  )}
+                  
                   <Button
                     type="submit"
-                    className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 mt-6"
+                    disabled={isLoading}
+                    className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 mt-6 disabled:opacity-50"
                   >
-                    Sign In
+                    {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                 </form>
               </TabsContent>

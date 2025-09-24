@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import { json } from 'express';
 import userRoutes from './routes/userRoutes';
 import menuRoutes from './routes/menuRoutes';
+import reservationRoutes from './routes/reservationRoutes';
+import orderRoutes from './routes/orderRoutes';
+import reviewRoutes from './routes/reviewRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -17,6 +20,9 @@ app.use(json());
 // Modular routes
 app.use('/api/auth', userRoutes);
 app.use('/api/menu', menuRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

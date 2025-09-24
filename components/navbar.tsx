@@ -4,13 +4,15 @@ import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingCart, Menu, X, User } from "lucide-react"
+import { ShoppingCart, Menu, X, User, LogOut } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import { useAuth } from "@/components/auth-provider"
 import { usePathname } from "next/navigation"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const { items } = useCart()
+  const { user, logout } = useAuth()
   const pathname = usePathname()
 
   // Don't show regular navbar on admin pages
@@ -68,11 +70,31 @@ export function Navbar() {
             </Link>
 
             {/* Auth */}
-            <Link href="/auth">
-              <Button variant="ghost" size="icon" className="text-brown-700 hover:text-brown-900 hover:bg-brown-50">
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Link href="/orders" className="text-brown-700 hover:text-brown-900 transition-colors font-medium text-sm hidden sm:block">
+                  My Orders
+                </Link>
+                <span className="text-brown-700 text-sm hidden sm:block">
+                  Welcome, {user.name}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={logout}
+                  className="text-brown-700 hover:text-brown-900 hover:bg-brown-50"
+                  title="Logout"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
+            ) : (
+              <Link href="/auth">
+                <Button variant="ghost" size="icon" className="text-brown-700 hover:text-brown-900 hover:bg-brown-50">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
 
             {/* Mobile menu button */}
             <Button
@@ -100,6 +122,15 @@ export function Navbar() {
                   {item.label}
                 </Link>
               ))}
+              {user && (
+                <Link
+                  href="/orders"
+                  className="text-brown-700 hover:text-brown-900 transition-colors font-medium px-2 py-1"
+                  onClick={() => setIsOpen(false)}
+                >
+                  My Orders
+                </Link>
+              )}
             </div>
           </div>
         )}

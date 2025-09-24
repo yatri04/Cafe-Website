@@ -5,8 +5,9 @@ const menuItemSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   price: z.number().positive(),
+  image: z.string().url().optional().or(z.literal('')),
   available: z.boolean().optional(),
-  categoryId: z.string().uuid()
+  categoryId: z.string().min(1)
 });
 
 const categorySchema = z.object({

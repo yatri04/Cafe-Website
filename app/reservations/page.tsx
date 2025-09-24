@@ -2,15 +2,19 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Clock, Users } from "lucide-react"
+import { Calendar, Clock, Users, LogIn } from "lucide-react"
+import { useAuth } from "@/components/auth-provider"
 
 export default function ReservationsPage() {
+  const { user, token, isLoading } = useAuth()
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,16 +23,104 @@ export default function ReservationsPage() {
     time: "",
     partySize: "",
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState("")
+  const [submitError, setSubmitError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/auth')
+    }
+  }, [user, isLoading, router])
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email
+      }))
+    }
+  }, [user])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log("Reservation submitted:", formData)
-    alert("Reservation request submitted! We'll confirm via email shortly.")
+    setIsSubmitting(true)
+    setSubmitMessage("")
+    setSubmitError("")
+
+    try {
+      const response = await fetch("http://localhost:4000/api/reservations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          table: parseInt(formData.partySize),
+          time: `${formData.date}T${formData.time}:00.000Z`
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setSubmitError(data.error || "Failed to create reservation")
+      } else {
+        setSubmitMessage("Reservation created successfully! We'll confirm via email shortly.")
+        // Reset form
+        setFormData(prev => ({
+          ...prev,
+          phone: "",
+          date: "",
+          time: "",
+          partySize: ""
+        }))
+      }
+    } catch (error) {
+      setSubmitError("Network error. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brown-600 mx-auto mb-4"></div>
+          <p className="text-brown-700">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-cream-50 flex items-center justify-center">
+        <Card className="card-3d bg-cream-50 border-0 max-w-md mx-4">
+          <CardContent className="p-8 text-center">
+            <LogIn className="h-16 w-16 text-brown-600 mx-auto mb-4" />
+            <h2 className="font-serif text-2xl font-bold text-brown-900 mb-4">
+              Login Required
+            </h2>
+            <p className="text-brown-700 mb-6">
+              You need to be logged in to make a reservation.
+            </p>
+            <Button
+              onClick={() => router.push('/auth')}
+              className="bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full px-8 py-3"
+            >
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -169,11 +261,24 @@ export default function ReservationsPage() {
                   </Select>
                 </div>
 
+                {submitError && (
+                  <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+                    {submitError}
+                  </div>
+                )}
+                
+                {submitMessage && (
+                  <div className="text-green-600 text-sm bg-green-50 p-3 rounded-md">
+                    {submitMessage}
+                  </div>
+                )}
+
                 <Button
                   type="submit"
-                  className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 text-lg font-medium"
+                  disabled={isSubmitting}
+                  className="w-full bg-brown-600 hover:bg-brown-700 text-cream-50 rounded-full py-3 text-lg font-medium disabled:opacity-50"
                 >
-                  Request Reservation
+                  {isSubmitting ? "Creating Reservation..." : "Request Reservation"}
                 </Button>
               </form>
             </CardContent>

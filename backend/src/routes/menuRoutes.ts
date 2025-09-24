@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { getMenu, createMenuItem, updateMenuItem, deleteMenuItem, getCategories, createCategory } from '../controllers/menuController.js';
-import { validateMenuItem, validateCategory } from '../middlewares/menuValidation.js';
-import { requireAuth, requireRole } from '../middlewares/authMiddleware.js';
+import { getMenu, createMenuItem, updateMenuItem, deleteMenuItem, getCategories, createCategory } from '../controllers/menuController';
+import { validateMenuItem, validateCategory } from '../middlewares/menuValidation';
+import { requireAuth, requireRole } from '../middlewares/authMiddleware';
 
 const router = Router();
 

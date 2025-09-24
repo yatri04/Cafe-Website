@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
