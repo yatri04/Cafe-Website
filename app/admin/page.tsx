@@ -54,7 +54,8 @@ export default function AdminDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/orders/admin/analytics", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/orders/admin/analytics`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -77,7 +78,8 @@ export default function AdminDashboard() {
     setLoginError("")
 
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -81,7 +81,8 @@ export default function AuthPage() {
     setIsLoading(true)
     
     try {
-      const response = await fetch("http://localhost:4000/api/auth/signup", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -105,7 +105,8 @@ export default function ReviewsPage() {
     setSubmitting(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:4000/api/reviews', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,8 @@ export default function ReviewsPage() {
         setNewReview({ orderId: "", rating: 0, comment: "" })
         setShowForm(false)
         // Refresh reviews
-        const reviewsResponse = await fetch('http://localhost:4000/api/reviews/approved')
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
+        const reviewsResponse = await fetch(`${baseUrl}/api/reviews/approved`)
         if (reviewsResponse.ok) {
           const data = await reviewsResponse.json()
           setReviews(data.reviews)

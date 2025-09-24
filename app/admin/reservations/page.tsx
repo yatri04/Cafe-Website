@@ -39,7 +39,8 @@ export default function ReservationsPage() {
   const fetchReservations = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:4000/api/reservations/all", {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/reservations/all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -64,7 +65,8 @@ export default function ReservationsPage() {
       setError("")
       setSuccessMessage("")
       
-      const response = await fetch(`http://localhost:4000/api/reservations/${id}/status`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/reservations/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

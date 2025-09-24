@@ -81,7 +81,8 @@ export default function ReviewsPage() {
     setUpdating(id)
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:4000/api/reviews/${id}/status`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${baseUrl}/api/reviews/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

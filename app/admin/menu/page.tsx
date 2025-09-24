@@ -110,7 +110,8 @@ export default function MenuManagerPage() {
         console.log('Adding item:', newItem)
         console.log('Token:', token)
         
-        const response = await fetch("http://localhost:4000/api/menu/item", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
+        const response = await fetch(`${baseUrl}/api/menu/item`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -147,7 +148,8 @@ export default function MenuManagerPage() {
   const handleEditItem = async () => {
     if (editingItem) {
       try {
-        const response = await fetch(`http://localhost:4000/api/menu/item/${editingItem.id}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
+        const response = await fetch(`${baseUrl}/api/menu/item/${editingItem.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -179,7 +181,8 @@ export default function MenuManagerPage() {
   const handleDeleteItem = async (id: string) => {
     if (confirm("Are you sure you want to delete this item?")) {
       try {
-        const response = await fetch(`http://localhost:4000/api/menu/item/${id}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
+        const response = await fetch(`${baseUrl}/api/menu/item/${id}`, {
           method: "DELETE",
           headers: {
             'Authorization': `Bearer ${token}`
@@ -201,7 +204,8 @@ export default function MenuManagerPage() {
     const item = menuItems.find(item => item.id === id)
     if (item) {
       try {
-        const response = await fetch(`http://localhost:4000/api/menu/item/${id}`, {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL
+        const response = await fetch(`${baseUrl}/api/menu/item/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
