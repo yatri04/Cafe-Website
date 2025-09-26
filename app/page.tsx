@@ -7,25 +7,26 @@ import { Coffee, MapPin, Clock, Star } from "lucide-react"
 export default function HomePage() {
   const featuredItems = [
     {
-      id: "1",
-      name: "Artisan Cappuccino",
-      description: "Rich espresso with perfectly steamed milk and latte art",
-      price: 373.50,
-      image: "/placeholder.svg?height=300&width=300&text=Cappuccino",
-    },
+    id: "1",
+    name: "Artisan Cappuccino",
+    description: "Rich espresso with perfectly steamed milk and latte art",
+    price: 373.50,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoJyO5UOEgIa_ST-OBKYSkilsSpcCjXMd7Q&s",
+    }, 
+
     {
       id: "2",
       name: "Blueberry Scone",
       description: "Fresh baked scone with wild blueberries and vanilla glaze",
       price: 269.75,
-      image: "/placeholder.svg?height=300&width=300&text=Blueberry+Scone",
+      image: "https://bakingwithgranny.co.uk/wp-content/uploads/2023/07/Blueberry-Scones-2.jpg",
     },
     {
       id: "3",
       name: "Avocado Toast",
       description: "Multigrain bread topped with smashed avocado and microgreens",
       price: 726.25,
-      image: "/placeholder.svg?height=300&width=300&text=Avocado+Toast",
+      image: "https://www.rootsandradishes.com/wp-content/uploads/2017/08/avocado-toast-with-everything-bagel-seasoning-feat.jpg",
     },
   ]
 
@@ -34,13 +35,13 @@ export default function HomePage() {
       {/* Hero Section with Background Image */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image
+          {/* <Image
             src="/placeholder.svg?height=1080&width=1920&text=Cozy+Cafe+Interior"
             alt="Brew & Bloom Café Interior"
             fill
             className="object-cover"
             priority
-          />
+          /> */}
           <div className="absolute inset-0 bg-gradient-to-r from-brown-900/70 to-brown-600/50"></div>
         </div>
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
@@ -100,7 +101,7 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=500&width=600&text=Coffee+Making+Process"
+                src="https://in.saint-gobain-glass.com/sites/in.saint-gobain-glass.com/files/inline-images/Glass%20Facades%20for%20Cafeterias.jpg"
                 alt="Coffee Making Process"
                 width={600}
                 height={500}
